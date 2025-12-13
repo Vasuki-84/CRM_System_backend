@@ -4,9 +4,10 @@ const bcrypt = require("bcryptjs");
 
 // user Register APi - POST method
 const registerAPI = async (req, res) => {
-  const { username, userEmail, password, role } = req.body;
+  
 
   try {
+    const { username, userEmail, password, role } = req.body;
     if (!username || !userEmail || !password || !role) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -49,7 +50,7 @@ const loginAPI = async (req, res) => {
   const token = jwt.sign(
     {
       userId: user._id,
-      username,
+      username :user.name,
       userEmail: user.Email,
       role: user.role,
     },
