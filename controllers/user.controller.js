@@ -49,7 +49,7 @@ const loginAPI = async (req, res) => {
   // JWT authentication
   const token = jwt.sign(
     {
-      userId: user._id,
+      id: user._id,
       username :user.name,
       userEmail: user.Email,
       role: user.role,

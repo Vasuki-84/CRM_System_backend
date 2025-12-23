@@ -1,47 +1,46 @@
-const customerModel = require("../model/customer.model");
-// const userModel = require("../model/user.model");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const Customer = require("../model/customer.model");
 
-// Customer Register API - POST method
 const customerRegister = async (req, res) => {
-  const { customerName, userId, customerNumber, deal, location } = req.body;
-
   try {
-    if (!customerName || !userId || !customerNumber || !deal || !location) {
-      return res.status(400).json({ message: "All fields are required" });
+    
+    const userId = req.userId;
+
+    const { customerName, customerNumber, deal, location } = req.body;
+
+    if (!customerName || !customerNumber || !deal || !location) {
+      return res.status(400).json({
+        message: "All fields are required",
+      });
     }
 
-    // userId check
-    // const userIdCheck = await userModel
+    if (!userId) {
+      return res.status(401).json({
+        message: "Unauthorized: User not authenticated",
+      });
+    }
 
-    const hashedCustomerNumber = await bcrypt.hash(customerNumber, 10);
-    const newCustomer = new customerModel({
+    const newCustomer = await Customer.create({
       customerName,
-      userId,
-      customerNumber: hashedCustomerNumber,
+      customerNumber,
       deal,
       location,
+      userId,
     });
-    await newCustomer.save();
-    //JWT authentication
-    const token = jwt.sign(
-      {
-        customerId: newCustomer._id,
-        userId,
-        customerName,
-        deal,
-        location,
-      },
-      process.env.customer_key,
-      { expiresIn: "24h" }
-    );
-    res
-      .status(201)
-      .json({ message: "Customer registration successfull", token: token });
-  } catch (err) {
-    res.status(500).json({ message: "Customer registration failed" });
+
+    return res.status(201).json({
+      message: "Customer created successfully",
+      customer: newCustomer,
+    });
+  } catch (error) {
+    console.error("Create Customer Error:", error.message);
+
+    return res.status(500).json({
+      message: "Customer creation failed",
+      error: error.message,
+    });
   }
 };
 
-module.exports = { customerRegister };
+module.exports = {
+  customerRegister,
+};

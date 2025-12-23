@@ -19,11 +19,17 @@ const authMiddleware = (allowedRoles = []) => {
       }
 
       if (!allowedRoles.includes(decoded.role)) {
-        return res.status(403).json({ message: "forbodden" });
+        return res
+          .status(403)
+          .json({
+            message: "forbidden : You don't have access to this resource ",
+          });
       }
       next();
     } catch (err) {
-      return res.status(401).json({ message: "unauthorized" });
+      return res
+        .status(401)
+        .json({ message: "unauthorized : invalid credentials" });
     }
   };
 };

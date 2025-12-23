@@ -1,8 +1,9 @@
 const express = require("express");
-const { customerRegister } = require("../controllers/customer.controller");
 const router = express.Router();
 
-// http://localhost:8081/customer/register
-router.post("/register", customerRegister);
+const authMiddleware = require("../middleware/userAuthMiddleware");
+const { customerRegister } = require("../controllers/customer.controller");
+
+router.post("/create", authMiddleware, customerRegister);
 
 module.exports = router;
