@@ -32,7 +32,7 @@ const customerRegister = async (req, res) => {
       customer: newCustomer,
     });
   } catch (error) {
-    console.error("Create Customer Error:", error.message);
+    console.error("Create Customer error:", error.message);
 
     return res.status(500).json({
       message: "Customer creation failed",

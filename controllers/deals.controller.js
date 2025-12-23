@@ -1,32 +1,31 @@
 const dealsModel = require("../model/deals.model");
+const customerModel = require("../model/customer.model");
 
 // POST Api
 
 const createDeals = async (req, res) => {
-  const {
-    userId,
-    customerId,
-    title,
-    description,
-    location,
-    amount,
-    dealStatus,
-  } = req.body;
-
   try {
-    if (
-      !userId ||
-      !customerId ||
-      !title ||
-      !description ||
-      !location ||
-      !amount ||
-      !dealStatus
-    ) {
-      return res.status(400).json({ message: "All fields are required" });
+
+    const { customerId, title, description, location, amount, dealStatus } =
+      req.body;
+
+    const customer = await customerModel.findOne({
+      _id: customerId,
+        userId: req.userId,
+    });
+
+    if (!customer) {
+      return res.status(404).json({
+        message: "Customer not found or unauthorized",
+      });
     }
+
+    if (!req.userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     const newDeal = new dealsModel({
-      userId,
+      userId:req.userId,
       customerId,
       title,
       description,
@@ -44,7 +43,7 @@ const createDeals = async (req, res) => {
 // GET API
 const getDeals = async (req, res) => {
   try {
-    const deals = await dealsModel.find();
+    const deals = await dealsModel.find({ userId: req.userId });
     res.status(200).json(deals);
   } catch (err) {
     res.status(500).json({ err: err.message });
@@ -53,11 +52,14 @@ const getDeals = async (req, res) => {
 
 // PUT API
 const updateDeals = async (req, res) => {
-  const { id } = req.params;
   try {
-    const updatedDeals = await dealsModel.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
+    const updatedDeals = await dealsModel.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
+      req.body,
+      {
+        new: true,
+      }
+    );
 
     res.status(200).json({ message: "Deal updated", updatedDeals });
   } catch (err) {
@@ -67,10 +69,16 @@ const updateDeals = async (req, res) => {
 
 // DELETE API
 const deleteDeals = async (req, res) => {
-  const { id } = req.params;
-
   try {
-    await dealsModel.findByIdAndDelete(id);
+    await dealsModel.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+
+    if (!deleteDeals) {
+      return res.status(404).json({ message: "Deal not found" });
+    }
+
     res.status(200).json({ message: "Deal deleted" });
   } catch (err) {
     res.status(500).json({ err: err.message });

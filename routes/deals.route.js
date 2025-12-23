@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
+const userAuthMiddleware = require("../middleware/userAuthMiddleware");
 
 const {
   createDeals,
@@ -10,7 +11,7 @@ const {
 } = require("../controllers/deals.controller");
 
 // http://localhost:8081/deals/createDeal
-router.post("/createDeal", authMiddleware(["admin"]), createDeals);
+router.post("/createDeal",userAuthMiddleware, authMiddleware(["admin"]), createDeals);
 
 // http://localhost:8081/deals
 router.get("/", getDeals);

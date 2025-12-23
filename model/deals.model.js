@@ -2,11 +2,13 @@ const mongoose = require("mongoose");
 
 const dealsSchema = mongoose.Schema({
   userId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
   customerId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Customers",
     required: true,
   },
   title: {
