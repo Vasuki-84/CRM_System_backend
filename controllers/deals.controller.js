@@ -5,13 +5,12 @@ const customerModel = require("../model/customer.model");
 
 const createDeals = async (req, res) => {
   try {
-
     const { customerId, title, description, location, amount, dealStatus } =
       req.body;
 
     const customer = await customerModel.findOne({
       _id: customerId,
-        userId: req.userId,
+      userId: req.userId,
     });
 
     if (!customer) {
@@ -25,7 +24,7 @@ const createDeals = async (req, res) => {
     }
 
     const newDeal = new dealsModel({
-      userId:req.userId,
+      userId: req.userId,
       customerId,
       title,
       description,
