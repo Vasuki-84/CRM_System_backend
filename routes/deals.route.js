@@ -14,12 +14,12 @@ const {
 router.post("/createDeal",userAuthMiddleware, authMiddleware(["admin"]), createDeals);
 
 // http://localhost:8081/deals
-router.get("/", getDeals);
+router.get("/",userAuthMiddleware, getDeals);
 
 // http://localhost:8081/deals/<id>
-router.put("/update/:id", authMiddleware(["admin"]), updateDeals);
+router.put("/update/:id",userAuthMiddleware, authMiddleware(["admin"]), updateDeals);
 
 // http://localhost:8081/deals/<id>
-router.delete("/:id", authMiddleware(["admin"]), deleteDeals);
+router.delete("/delete/:id",userAuthMiddleware, authMiddleware(["admin"]), deleteDeals);
 
 module.exports = router;
